@@ -1,0 +1,115 @@
+name: MLOps Pipeline CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test_suite:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run tests
+      run: |
+        cd src && python -m pytest ../tests/ -v --tb=short
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results
+        path: |
+          tests/
+          models/
+
+  train_and_quantize:
+    name: Train and Quantize
+    runs-on: ubuntu-latest
+    needs: test_suite
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Create models directory
+      run: mkdir -p models
+    
+    - name: Train model
+      run: |
+        cd src
+        python train.py
+    
+    - name: Quantize model
+      run: |
+        cd src
+        python quantize.py
+    
+    - name: Upload model artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: model-artifacts
+        path: |
+          models/
+        retention-days: 30
+
+  build_and_test_container:
+    name: Build and Test Container
+    runs-on: ubuntu-latest
+    needs: train_and_quantize
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Download model artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: model-artifacts
+        path: models/
+    
+    - name: Build Docker image
+      run: |
+        docker build -t linear-regression-mlops:latest .
+    
+    - name: Test Docker container
+      run: |
+        docker run --rm linear-regression-mlops:latest
+    
+    - name: Run container health check
+      run: |
+        docker run --name test-container -d linear-regression-mlops:latest
+        sleep 10
+        docker exec test-container python src/predict.py
+        docker stop test-container
+        docker rm test-container
+    
+    - name: Docker image info
+      run: |
+        docker images linear-regression-mlops:latest
+        docker history linear-regression-mlops:latest
