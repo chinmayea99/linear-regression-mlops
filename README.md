@@ -24,6 +24,8 @@ This project implements a production-ready linear regression model using the Cal
 - **Quantization Error**: 0.1093% relative error
 
 ## 🏗️ Project Structure
+
+```
 linear-regression-mlops/
 ├── src/
 │   ├── train.py          # Model training script
@@ -33,7 +35,7 @@ linear-regression-mlops/
 │   └── test_train.py     # Comprehensive test suite
 ├── models/               # Saved model artifacts
 └── README.md
-
+```
 
 ## 🚀 Features
 
@@ -84,63 +86,81 @@ Comprehensive test coverage with 9 test cases:
 ### Prerequisites
 ```bash
 pip install scikit-learn numpy joblib pytest
+```
 
-Running the Pipeline
+### Running the Pipeline
 
-Train the Model
+1. **Train the Model**
+```bash
+python src/train.py
+```
 
-bashpython src/train.py
+2. **Quantize the Model**
+```bash
+python src/quantize.py
+```
 
-Quantize the Model
+3. **Make Predictions**
+```bash
+python src/predict.py
+```
 
-bashpython src/quantize.py
+4. **Run Tests**
+```bash
+python -m pytest tests/ -v
+```
 
-Make Predictions
+## 📋 Performance Metrics
 
-bashpython src/predict.py
+### Model Comparison
+| Metric | Original Model | Quantized Model | Difference |
+|--------|---------------|-----------------|------------|
+| R² Score | 0.5758 | 0.5767 | +0.0009 |
+| RMSE | 0.7456 | 0.7448 | -0.0008 |
+| MAE | 0.5332 | 0.5335 | +0.0003 |
+| Model Size | 72 bytes | 16 bytes | -78% |
 
-Run Tests
-
-bashpython -m pytest tests/ -v
-📋 Performance Metrics
-Model Comparison
-MetricOriginal ModelQuantized ModelDifferenceR² Score0.57580.5767+0.0009RMSE0.74560.7448-0.0008MAE0.53320.5335+0.0003Model Size72 bytes16 bytes-78%
-Sample Predictions
+### Sample Predictions
 The model provides consistent predictions with acceptable error rates:
+- Average absolute error across samples: ~0.6
+- Model maintains good generalization performance
 
-Average absolute error across samples: ~0.6
-Model maintains good generalization performance
+## 🎖️ Key Achievements
 
-🎖️ Key Achievements
+- **Model Compression**: 4.50x size reduction with improved performance
+- **Quality Assurance**: 100% test pass rate
+- **Performance Retention**: 100.16% of original performance maintained
+- **Production Ready**: Complete MLOps pipeline with automated testing
 
-Model Compression: 4.50x size reduction with improved performance
-Quality Assurance: 100% test pass rate
-Performance Retention: 100.16% of original performance maintained
-Production Ready: Complete MLOps pipeline with automated testing
+## 🔍 Model Quality Metrics
 
-🔍 Model Quality Metrics
-Quantization Quality Assessment
-
-Mean Absolute Error: 0.00191418
-Relative Error: 0.1093%
-Max Error: 0.00276473
+### Quantization Quality Assessment
+- **Mean Absolute Error**: 0.00191418
+- **Relative Error**: 0.1093%
+- **Max Error**: 0.00276473
 
 These metrics indicate excellent quantization quality with minimal performance degradation.
-🚦 Model Validation
+
+## 🚦 Model Validation
+
 The model meets production readiness criteria:
+- ✅ R² Score > 0.5 (actual: 0.5767)
+- ✅ All tests passing
+- ✅ Successful model compression
+- ✅ Acceptable prediction accuracy
 
-✅ R² Score > 0.5 (actual: 0.5767)
-✅ All tests passing
-✅ Successful model compression
-✅ Acceptable prediction accuracy
+## 📝 Future Enhancements
 
-📝 Future Enhancements
+- Integration with MLflow for experiment tracking
+- Docker containerization for deployment
+- CI/CD pipeline integration
+- Hyperparameter optimization
+- Advanced model monitoring and drift detection
 
-Integration with MLflow for experiment tracking
-Docker containerization for deployment
-CI/CD pipeline integration
-Hyperparameter optimization
-Advanced model monitoring and drift detection
+## 🤝 Contributing
 
-🤝 Contributing
 This project follows MLOps best practices including automated testing, model versioning, and performance monitoring. Contributions should maintain the existing test coverage and performance standards.
+
+---
+
+**Status**: ✅ Production Ready | **Last Updated**: Model quantization optimization completed
